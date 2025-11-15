@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from database import create_db_and_tables
 from routers import scans
+from routers import tags
 
 # Initialize DB (creates file and tables if they don't exist)
 create_db_and_tables()
@@ -12,6 +13,7 @@ app = FastAPI(
 
 # Include the first router
 app.include_router(scans.router)
+app.include_router(tags.router)
 
 @app.get("/", tags=["root"])
 def read_root():

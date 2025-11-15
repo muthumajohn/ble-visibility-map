@@ -6,6 +6,7 @@ import models
 from database import get_db
 from models import ScanDataIn, BLEDeviceOut
 from services.fingerprint import analyze_ble_scan
+from services.notifier import check_and_notify 
 
 router = APIRouter(
     prefix="/scans",
@@ -70,6 +71,8 @@ async def submit_scan_event(scan_in: ScanDataIn, db: Session = Depends(get_db)):
     # Create/Update the persistent BLEDevice profile
     db_device = _update_device_profile(db, mac_address, fingerprint_data, is_new_device)
     
-    #  TODO: Notification Check (If db_device.allow_notifications is True)
-
+    await check_and_notify(db_device, scan_in.rssi)
+    
     return db_device
+    
+  
