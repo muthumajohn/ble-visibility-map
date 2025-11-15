@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Float, Boolean
 from sqlalchemy.orm import declarative_base
 from pydantic import BaseModel, Field
 
-from .database import Base
+from database import Base
 
 # --- SQLAlchemy ORM Models ---
 

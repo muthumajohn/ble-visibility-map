@@ -9,7 +9,7 @@
 
 The **BLE Visibility Map** is an educational project designed to demonstrate how Bluetooth Low Energy devices can be discovered, profiled, tagged, monitored, and analyzed from a cybersecurity perspective.
 
-Modern devices broadcast BLE advertisement packets even when not connected. This system captures those broadcasts using a scanning gateway (ESP32), sends them to a Python backend for processing, and visualizes them in a React-based web dashboard built with **Mantine UI**.
+Modern devices broadcast BLE advertisement packets even when not connected. This system captures those broadcasts using a scanning gateway, sends them to a Python backend for processing, and visualizes them in a React-based web dashboard built with **Mantine UI**.
 
 Users can:
 
@@ -64,10 +64,8 @@ And the following web engineering skills:
 - Event & alert system
 
 ### **Scanning Gateway**
-Supports any of the following:
-- **ESP32** running BLE scan firmware  
-- **Android phone** using a lightweight scanning app  
-- **Linux machine** using `bluepy`, `bleak`, or `hcitool`
+Supports any of the following: 
+- **Linux machine** using `bleak`
 
 Gateway pushes scan events → Python backend → database → frontend dashboard.
 
@@ -133,8 +131,8 @@ ble-threat-tracker/
 │   └── package.json
 │
 ├── gateway/
-│   ├── esp32-firmware/       # Arduino/Python scanning code
-│   └── android-app/          # Optional BLE scanner app
+│   ├── ble_scanner_simulator.py       # Python scanning code
+│   └── requirements.txt          # bleak,httpx pip install
 │
 ├── diagrams/
 │   └── architecture.svg      # Animated icon-enhanced SVG
@@ -147,7 +145,7 @@ ble-threat-tracker/
 
 ## ⚙️ Installation
 
-### **1. Backend (Python)**
+### **1. Backend and Scanner (Python)**
 
 ```bash
 cd backend
@@ -162,6 +160,24 @@ uvicorn main:app --reload
 Backend runs by default on:
 **[http://localhost:8000](http://localhost:8000)**
 
+Once the backend is running successfully:
+
+1.  Open a **new terminal** (keep the backend terminal running).
+2.  Navigate to the **`gateway/`** directory. (`cd gateway`)
+3.  Ensure you havesetup virtual env for the scanner.
+    ```bash
+    python3 -m venv venv_scanner
+    source venv_scanner/bin/activate
+    pip install -r requirements.txt
+    ```
+4.  Run the scanner in the same `venv_scanner` terminal:
+    ```bash
+    python ble_scanner_simulator.py
+    ```
+5.  You should see output in the scanner terminal about devices being found and posted, and in the backend terminal, you'll see successful `201 Created` responses.
+
+**NOTE: ensure that bluetooth is turned on in the device you are scanning with**
+
 ---
 
 ### **2. Frontend (React + Mantine)**
@@ -174,22 +190,6 @@ npm run dev
 
 Frontend runs by default on:
 **[http://localhost:5173](http://localhost:5173)**
-
----
-
-### **3. Ble Gateway (ESP32)**
-
-Upload this firmware:
-
-```cpp
-
-```
-
-ESP32 will POST scan data to:
-
-```
-http://localhost:8000/scans
-```
 
 ---
 

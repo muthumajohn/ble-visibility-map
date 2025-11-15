@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from datetime import datetime
 
-from .. import models
-from ..database import get_db
-from ..models import ScanDataIn, BLEDeviceOut
-from ..services.fingerprint import analyze_ble_scan
+import models
+from database import get_db
+from models import ScanDataIn, BLEDeviceOut
+from services.fingerprint import analyze_ble_scan
 
 router = APIRouter(
     prefix="/scans",
