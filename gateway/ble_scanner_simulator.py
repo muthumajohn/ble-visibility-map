@@ -44,8 +44,8 @@ async def scan_and_post():
             data = format_scan_data(device, advertisement_data)
             detected_devices[device.address] = data
             
-    # We also use the 'async with' context manager for cleaner start/stop
-    async with BleakScanner(detection_callback=detection_callback) as scanner:
+    ADAPTER_INDEX = 0 
+    async with BleakScanner(detection_callback=detection_callback, adapter=f"hci{ADAPTER_INDEX}") as scanner:
         # The scanner starts immediately upon entering the 'async with' block.
         print("Scanning for 8 seconds...")
         await asyncio.sleep(8) # Scan for 8 seconds

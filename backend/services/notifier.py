@@ -1,35 +1,43 @@
+from sqlalchemy.orm import Session
+from datetime import datetime
 import models 
 from database import SessionLocal 
 
-async def check_and_notify(db_device: models.BLEDevice, current_rssi: int):
+def log_event(db: Session, mac: str, event_type: str, message: str, risk_score: float):
+    """Logs an alert event to the database and returns the new event object."""
+    db_event = models.Event(
+        device_mac=mac,
+        event_type=event_type,
+        message=message,
+        timestamp=datetime.utcnow(),
+        risk_score=risk_score
+    )
+    db.add(db_event)
+    db.commit()
+    db.refresh(db_event)
+    return db_event
+
+def check_and_notify(db: Session, db_device: models.BLEDevice, current_rssi: int):
     """
-    Checks if a device is tagged for notifications and triggers an alert if needed.
-    (Currently prints a console notification, which can be expanded to WebSockets/email later)
+    Checks if a device is tagged for notifications and triggers an alert 
+    by logging an Event to the database.
     """
     if db_device.allow_notifications:
-        # In a real app, this would send a WebSocket message to the frontend, 
-        # push notification, or log a high-priority event.
-        
-        # For now, we'll log it to the backend console:
         message = (
-            f"!!! ALERT !!! Tagged device DETECTED: "
-            f"MAC={db_device.mac_address} | Name='{db_device.friendly_name}' "
-            f"| RSSI={current_rssi} dBm | Risk={db_device.threat_score:.1f}"
+            f"Tagged device '{db_device.friendly_name}' reappeared. "
+            f"Signal strength: {current_rssi} dBm. "
+            f"Vendor: {db_device.vendor}."
         )
-        print("\n" + "="*50)
-        print(message)
-        print("="*50 + "\n")
         
-        # We can also save an Event record to the database (which we'll define later)
-        # For now, this is a placeholder:
-        # await log_event(db_device.mac_address, "REAPPEARANCE_ALERT")
+        log_event(
+            db=db,
+            mac=db_device.mac_address,
+            event_type="REAPPEARANCE_ALERT",
+            message=message,
+            risk_score=db_device.threat_score
+        )
+        # Note: In a production app, this is where you'd also send a WebSocket
+        # message to the frontend for real-time update *after* logging to the DB.
         
         return True
     return False
-
-# Placeholder for future event logging (optional for now)
-# async def log_event(mac: str, event_type: str):
-#     """Logs an alert event to the database (requires an Event model)."""
-#     db = SessionLocal()
-#     # ... logic to create Event object ...
-#     db.close()

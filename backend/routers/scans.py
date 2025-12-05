@@ -71,8 +71,9 @@ async def submit_scan_event(scan_in: ScanDataIn, db: Session = Depends(get_db)):
     # Create/Update the persistent BLEDevice profile
     db_device = _update_device_profile(db, mac_address, fingerprint_data, is_new_device)
     
-    await check_and_notify(db_device, scan_in.rssi)
+    #await check_and_notify(db_device, scan_in.rssi)
+    check_and_notify(db, db_device, scan_in.rssi)
     
     return db_device
     
-  
+ 

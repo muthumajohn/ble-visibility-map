@@ -64,3 +64,35 @@ class BLEDeviceOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class Event(Base):
+    """Stores a log of significant events, primarily reappearance alerts."""
+    __tablename__ = "events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    device_mac = Column(String, index=True, nullable=False)
+    event_type = Column(String, nullable=False) # e.g., "REAPPEARANCE_ALERT", "RSSI_THRESHOLD_BREACH"
+    message = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow, index=True)
+    risk_score = Column(Float, default=0.0)
+
+class EventOut(BaseModel):
+    """Model for outputting event logs to the frontend."""
+    id: int
+    device_mac: str
+    event_type: str
+    message: str
+    timestamp: datetime
+    risk_score: float
+
+    class Config:
+        from_attributes = True
+
+class EventIn(BaseModel):
+    device_mac: str = Field(..., description="MAC address of the device related to the event.")
+    event_type: str = Field(..., description="Type of event (e.g., REAPPEARANCE_ALERT).")
+    message: str = Field(..., description="Detailed event message.")
+    risk_score: float = Field(0.0, description="Associated threat score.")
+
+    class Config:
+        from_attributes = True

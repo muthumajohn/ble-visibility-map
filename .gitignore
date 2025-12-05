@@ -8,3 +8,6 @@ __pycache__/
 .vscode/
 *.log
 node_modules/
+ble_visibility_map.db
+backend/ble_visibility_map.db
+

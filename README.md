@@ -172,7 +172,12 @@ Once the backend is running successfully:
     ```
 4.  Run the scanner in the same `venv_scanner` terminal:
     ```bash
-    python ble_scanner_simulator.py
+    python ble_scanner_simulator.py  
+    ```
+    or
+    ```bash
+    sudo $PWD/venv_scanner/bin/python bluepy_scanner_simulator.py
+
     ```
 5.  You should see output in the scanner terminal about devices being found and posted, and in the backend terminal, you'll see successful `201 Created` responses.
 
