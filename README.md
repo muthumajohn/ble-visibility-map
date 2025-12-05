@@ -175,10 +175,36 @@ Once the backend is running successfully:
     python ble_scanner_simulator.py  
     ```
     or
-    ```bash
-    sudo $PWD/venv_scanner/bin/python bluepy_scanner_simulator.py
+   
+   for bluepy scanner script 
+   You have two primary ways to run this:
 
-    ```
+   #### Method 1: The Portable/Secure Way (`setcap`) - Recommended
+
+   1.  **Ensure `venv_scanner` is active.**
+   2.  **Apply `setcap`:**
+
+      ```bash
+      # Use $PWD for the current directory path.
+      sudo setcap 'cap_net_raw,cap_net_admin+eip' $PWD/venv_scanner/bin/python
+      ```
+      *   If this fails, try installing the capability package: `sudo apt install libcap2-bin` and then re-run the `setcap` command.*
+
+   3.  **Run the script:**
+      ```bash
+      python bluepy_scanner_simulator.py
+      ```
+
+   #### Method 2: The Direct Root Way (Less Secure but Confirms Functionality)
+
+   If `setcap` fails, you can bypass the permission issue by running the venv's Python executable directly with `sudo`.
+
+   1.  **Run the script:**
+
+      ```bash
+      # You must use the full path to the python executable inside the venv
+      sudo $PWD/venv_scanner/bin/python bluepy_scanner_simulator.py
+      ```
 5.  You should see output in the scanner terminal about devices being found and posted, and in the backend terminal, you'll see successful `201 Created` responses.
 
 **NOTE: ensure that bluetooth is turned on in the device you are scanning with**
